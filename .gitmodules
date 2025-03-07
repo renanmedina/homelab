@@ -1,0 +1,6 @@
+[submodule "projects/dcp-broadcaster"]
+	path = projects/dcp-broadcaster
+	url = git@github.com:renanmedina/dcp-broadcaster.git
+[submodule "projects/whatsapp-service"]
+	path = projects/whatsapp-service
+	url = git@github.com:renanmedina/whatsapp-service.git
