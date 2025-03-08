@@ -9,4 +9,9 @@ docker/volumes/storage/waha-service/medias/*
 !docker/volumes/storage/waha-service/medias/*.keep
 docker/volumes/storage/waha-service/sessions/*
 !docker/volumes/storage/waha-service/sessions/*.keep
+docker/volumes/storage/n8n/*
+!docker/volumes/storage/n8n/*.keep
+docker/volumes/storage/ollama-service/*
+!docker/volumes/storage/ollama-service/*.keep
+
 
