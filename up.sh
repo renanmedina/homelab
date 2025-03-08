@@ -1,2 +1,2 @@
 #!/bin/bash
-docker-compose -p="homelab" up -d
+docker-compose -p="homelab" up -d --build

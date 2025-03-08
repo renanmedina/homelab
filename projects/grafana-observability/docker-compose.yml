@@ -6,15 +6,15 @@ services:
     ports:
       - "8881:3000"
     environment:
-      - GF_LOG_LEVEL=debug
-      - GF_SECURITY_ADMIN_USER=renanmedina
-      - GF_PLUGIN_GRAFANA_IMAGE_RENDERER_RENDERING_IGNORE_HTTPS_ERRORS=true
-      - GF_SERVER_ROOT_URL=http://localhost:8881/
-      - GF_PLUGINS_PREINSTALL=grafana-clock-panel
-      - GF_FEATURE_TOGGLES_ENABLE=externalServiceAccounts
-      - GF_PLUGINS_ENABLE_ALPHA=true
+      - GF_LOG_LEVEL=${GF_LOG_LEVEL:-debug}
+      - GF_SECURITY_ADMIN_USER=${GF_SECURITY_ADMIN_USER:-grafana}
+      - GF_PLUGIN_GRAFANA_IMAGE_RENDERER_RENDERING_IGNORE_HTTPS_ERRORS=${GF_PLUGIN_GRAFANA_IMAGE_RENDERER_RENDERING_IGNORE_HTTPS_ERRORS:-true}
+      - GF_SERVER_ROOT_URL=${GF_SERVER_ROOT_URL:-http://localhost:8881/}
+      - GF_PLUGINS_PREINSTALL=${GF_PLUGINS_PREINSTALL:-grafana-clock-panel}
+      - GF_FEATURE_TOGGLES_ENABLE=${GF_FEATURE_TOGGLES_ENABLE:-externalServiceAccounts}
+      - GF_PLUGINS_ENABLE_ALPHA=${GF_PLUGINS_ENABLE_ALPHA:-true}
     volumes:
-      - ./storage/grafana:/var/lib/grafana
+      - ${GF_CONTAINER_STORAGE_VOLUME:-./storage/grafana}:/var/lib/grafana
     links:
       - prometheus
       - jaeger

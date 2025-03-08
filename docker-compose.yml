@@ -1,34 +1,17 @@
-version: '3.7'
+version: '3.3'
+include:
+  - path: ./projects/grafana-observability/docker-compose.yml
+    env_file: ./docker/env_files/grafana.env
+  - path: ./projects/dcp-broadcaster/deployment/docker/composable-docker-compose.yml
+    env_file: ./docker/env_files/dcp-broadcaster.env
+  - path: ./projects/whatsapp-service/docker-compose.yml
+    env_file: ./docker/env_files/whatsapp-service.env
 services:
-  apps-observability:
-    extends:
-      file: ./projects/grafana-observability/docker-compose.yml
-      service: apps-observability
-    networks:
-      - homelab
-  dcp-broadcaster:
-    extends:
-      file: ./projects/dcp-broadcaster/deployment/docker/app-docker-compose.yml
-      service: dcp-broadcaster
-    env_file:
-      - ./docker/env_files/dcp-broadcaster.env
-    networks:
-      - homelab
-  whatsapp-service:
-    extends:
-      file: ./projects/whatsapp-service/docker-compose.yml
-      service: whatsapp-service
-    env_file:
-      - ./docker/env_files/whatsapp-service.env
-    networks:
-      - homelab
   whatsapp-service-waha:
     image: devlikeapro/waha:latest
     container_name: homelab-whatsapp-service-waha
     env_file:
       - ./docker/env_files/waha-service.env
-    networks:
-      - homelab
     ports:
       - 7774:7774
     volumes:
@@ -37,8 +20,6 @@ services:
   n8n:
     image: docker.n8n.io/n8nio/n8n:latest
     container_name: homelab-n8n
-    networks:
-      - homelab
     ports:
       - "7775:5678"
     volumes:
@@ -46,16 +27,12 @@ services:
   metabase:
     image: metabase/metabase:latest
     container_name: homelab-metabase
-    networks:
-      - homelab
     ports: 
       - "7776:3000"
     restart: "always"
   postgres:
     image: postgres:16-alpine
     container_name: homelab-postgres
-    networks:
-      - homelab
     hostname: homelab-postgres
     restart: always
     env_file: 
@@ -72,12 +49,10 @@ services:
   redis:
     image: redis:7.4.2-alpine
     container_name: homelab-redis
-    networks:
-      - homelab
     hostname: homelab-redis
     restart: always
     ports:
-      - "6378:6379"
+      - "6379:6379"
     healthcheck:
       test: [ "CMD", "redis-cli", "--raw", "incr", "ping" ]
       interval: 5s
@@ -86,8 +61,6 @@ services:
   ollama-service:
     image: ollama/ollama:latest
     container_name: homelab-ollama-service
-    networks:
-      - homelab
     deploy:
       resources:
         reservations:
@@ -101,8 +74,8 @@ services:
     volumes:
       - ./docker/volumes/storage/ollama-service:/root/.ollama
     restart: "always"
-networks:
-  homelab:
-    driver: bridge
-    driver_opts:
-      com.docker.network.bridge.host_binding_ipv4: "127.0.0.1"
+# networks:
+#   homelab:
+#     driver: bridge
+#     driver_opts:
+#       com.docker.network.bridge.host_binding_ipv4: "127.0.0.1"
