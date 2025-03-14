@@ -20,7 +20,6 @@ services:
       - jaeger
       - loki
       # - elasticsearch
-    
     restart: unless-stopped
   prometheus:
     container_name: observability-prometheus
@@ -51,7 +50,6 @@ services:
       # - ./configs/jaeger.yml:/jaeger/config.yaml
       - ./configs/jaeger.ui.json:/etc/jaeger/jaeger-ui.json
       # - elasticsearch
-    
     restart: unless-stopped
   cadvisor:
     container_name: observability-cadvisor
@@ -67,7 +65,7 @@ services:
     privileged: true
     devices:
       - /dev/kmsg
-    
+    restart: unless-stopped
   loki:
     container_name: observability-loki
     image: grafana/loki:latest
@@ -77,7 +75,7 @@ services:
     volumes:
       - ./configs/loki.yaml:/etc/loki/local-config.yaml
     command: -config.file=/etc/loki/local-config.yaml
-    
+    restart: unless-stopped
   grafana-alloy:
     container_name: observability-grafana-alloy
     image: grafana/alloy:latest
@@ -91,13 +89,14 @@ services:
     command: run /etc/alloy/config.alloy --server.http.listen-addr=0.0.0.0:8885 --storage.path=/var/lib/alloy/data
     privileged: true
     pid: host
-    
     links:
       - loki
       - grafana-pyroscope
+    restart: unless-stopped
   grafana-pyroscope:  
     container_name: observability-pyroscope
     image: grafana/pyroscope:latest
     ports:
       - "4040:4040"
+    restart: unless-stopped
     

@@ -17,6 +17,7 @@ services:
     volumes:
       - ./docker/volumes/storage/waha-service/medias:/app/.media
       - ./docker/volumes/storage/waha-service/sessions:/app/sessions
+    restart: unless-stopped
   n8n:
     image: docker.n8n.io/n8nio/n8n:latest
     container_name: homelab-n8n
@@ -24,21 +25,21 @@ services:
       - "7775:5678"
     volumes:
       - ./docker/volumes/storage/n8n:/home/node/.n8n
+    restart: unless-stopped
   metabase:
     image: metabase/metabase:latest
     container_name: homelab-metabase
     ports: 
       - "7776:3000"
-    restart: "always"
-  postgres:
-    image: postgres:16-alpine
+    restart: unless-stopped
+  postgis:
+    image: postgis/postgis:15-3.3-alpine
     container_name: homelab-postgres
     hostname: homelab-postgres
-    restart: always
     env_file: 
       - ./docker/env_files/homelab-postgres.env
     ports:
-      - "5433:5432"
+      - "5432:5432"
     volumes:
       - ./docker/volumes/storage/postgresql/create-db.sql:/docker-entrypoint-initdb.d/create_database.sql
     healthcheck:
@@ -46,11 +47,11 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
+    restart: always
   redis:
     image: redis:7.4.2-alpine
     container_name: homelab-redis
     hostname: homelab-redis
-    restart: always
     ports:
       - "6379:6379"
     healthcheck:
@@ -58,6 +59,7 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
+    restart: unless-stopped
   ollama-service:
     image: ollama/ollama:latest
     container_name: homelab-ollama-service
@@ -73,7 +75,7 @@ services:
     # command: "-m /app/models/llama-3.2-1B.gguf"
     volumes:
       - ./docker/volumes/storage/ollama-service:/root/.ollama
-    restart: "always"
+    restart: unless-stopped
 # networks:
 #   homelab:
 #     driver: bridge

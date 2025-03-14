@@ -4,3 +4,6 @@
 [submodule "projects/whatsapp-service"]
 	path = projects/whatsapp-service
 	url = git@github.com:renanmedina/whatsapp-service.git
+[submodule "projects/whatsapp-service-waha"]
+	path = projects/whatsapp-service-waha
+	url = git@github.com:renanmedina/waha.git
