@@ -1,17 +1,1 @@
 docker/env_files/*.env
-docker/volumes/storage/grafana/*
-!docker/volumes/storage/grafana/.keep
-docker/volumes/storage/grafana-alloy/*
-!docker/volumes/storage/grafana-alloy/.keep
-docker/volumes/storage/loki/*
-!docker/volumes/storage/loki/.keep
-docker/volumes/storage/waha-service/medias/*
-!docker/volumes/storage/waha-service/medias/*.keep
-docker/volumes/storage/waha-service/sessions/*
-!docker/volumes/storage/waha-service/sessions/*.keep
-docker/volumes/storage/n8n/*
-!docker/volumes/storage/n8n/*.keep
-docker/volumes/storage/ollama-service/*
-!docker/volumes/storage/ollama-service/*.keep
-docker/volumes/storage/metabase/*
-!docker/volumes/storage/metabase/*.keep

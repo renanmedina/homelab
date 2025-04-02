@@ -21,16 +21,20 @@ services:
   n8n:
     image: docker.n8n.io/n8nio/n8n:latest
     container_name: silvamedina-vps-n8n
+    env_file:
+      - ./docker/env_files/n8n.env
     ports:
-      - "8082:5678"
+      - "${N8N_PORT-5678}:${N8N_PORT:-5678}"
     volumes:
       - ./docker/volumes/storage/n8n:/home/node/.n8n
     restart: unless-stopped
   metabase:
     image: metabase/metabase:latest
     container_name: silvamedina-vps-metabase
+    env_file:
+      - ./docker/env_files/metabase.env
     ports: 
-      - "8083:3000"
+      - "${METABASE_PORT-3000}:3000"
     volumes:
       - ./docker/volumes/storage/metabase:/metabase-data
     environment:
@@ -64,6 +68,27 @@ services:
       timeout: 5s
       retries: 5
     restart: unless-stopped
+  nginx:
+    image: bitnami/nginx:latest
+    container_name: silvamedina-vps-nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    env_file:
+      - ./docker/env_files/nginx.env
+    environment:
+      - NGINX_SERVER_NAME=${NGINX_SERVER_NAME:-localhost}
+      - NGINX_ENABLE_STREAM=${NGINX_ENABLE_STREAM:-no}
+    volumes:
+      - ./docker/config_files/nginx/nginx_reverse_proxy.conf:/opt/bitnami/nginx/conf/server_blocks/nginx_reverse_proxy.conf:ro
+      - ./docker/volumes/storage/nginx/logs:/opt/bitnami/nginx/logs
+    links:
+      - n8n
+      - metabase
+      - postgis
+      - redis
+      - whatsapp-service-waha
+    
   # ollama-service:
   #   image: ollama/ollama:latest
   #   container_name: silvamedina-vps-ollama-service
