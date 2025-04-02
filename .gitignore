@@ -13,5 +13,5 @@ docker/volumes/storage/n8n/*
 !docker/volumes/storage/n8n/*.keep
 docker/volumes/storage/ollama-service/*
 !docker/volumes/storage/ollama-service/*.keep
-
-
+docker/volumes/storage/metabase/*
+!docker/volumes/storage/metabase/*.keep

@@ -31,6 +31,10 @@ services:
     container_name: homelab-metabase
     ports: 
       - "7776:3000"
+    volumes:
+      - ./docker/volumes/storage/metabase:/metabase-data
+    environment:
+      - MB_DB_FILE=/metabase-data/metabase.db
     restart: unless-stopped
   postgis:
     image: postgis/postgis:15-3.3-alpine
