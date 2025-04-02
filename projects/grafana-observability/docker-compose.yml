@@ -4,12 +4,12 @@ services:
     container_name: observability-grafana
     image: grafana/grafana:latest 
     ports:
-      - "8881:3000"
+      - "${GF_PORT-3000}:3000"
     environment:
       - GF_LOG_LEVEL=${GF_LOG_LEVEL:-debug}
       - GF_SECURITY_ADMIN_USER=${GF_SECURITY_ADMIN_USER:-grafana}
       - GF_PLUGIN_GRAFANA_IMAGE_RENDERER_RENDERING_IGNORE_HTTPS_ERRORS=${GF_PLUGIN_GRAFANA_IMAGE_RENDERER_RENDERING_IGNORE_HTTPS_ERRORS:-true}
-      - GF_SERVER_ROOT_URL=${GF_SERVER_ROOT_URL:-http://localhost:8881/}
+      - GF_SERVER_ROOT_URL=${GF_SERVER_ROOT_URL:-http://localhost:3000/}
       - GF_PLUGINS_PREINSTALL=${GF_PLUGINS_PREINSTALL:-grafana-clock-panel}
       - GF_FEATURE_TOGGLES_ENABLE=${GF_FEATURE_TOGGLES_ENABLE:-externalServiceAccounts}
       - GF_PLUGINS_ENABLE_ALPHA=${GF_PLUGINS_ENABLE_ALPHA:-true}
@@ -25,19 +25,18 @@ services:
     container_name: observability-prometheus
     image: bitnami/prometheus:latest
     ports:
-      - "9090:9090"
+      - "${PROMETHEUS_PORT-9090}:9090"
     volumes:
-      - ./configs/prometheus.yml:/opt/bitnami/prometheus/conf/prometheus.yml
+      - "${PROMETHEUS_CONFIG_FILE:-./configs/prometheus.yml}:/opt/bitnami/prometheus/conf/prometheus.yml"
     links:
       - jaeger
       - cadvisor
-    
     restart: unless-stopped
   jaeger:
     container_name: observability-jaeger
     image: jaegertracing/jaeger:latest
     ports:
-      - "8882:16686"
+      - "${JAEGER_PORT-16686}:16686"
       - "4417:4317"
       - "4418:4318"
       - "5778:5778"
@@ -45,17 +44,17 @@ services:
     environment:
       - OTEL_TRACES_SAMPLER=always_off
       - METRICS_STORAGE_TYPE=prometheus
-      - PROMETHEUS_SERVER_URL=http://observability-prometheus:9090
+      - PROMETHEUS_SERVER_URL=http://observability-prometheus:${PROMETHEUS_PORT-9090}
     volumes:
       # - ./configs/jaeger.yml:/jaeger/config.yaml
-      - ./configs/jaeger.ui.json:/etc/jaeger/jaeger-ui.json
+      - ${JAEGER_UI_CONFIG_FILE:-./configs/jaeger.ui.json}:/etc/jaeger/jaeger-ui.json
       # - elasticsearch
     restart: unless-stopped
   cadvisor:
     container_name: observability-cadvisor
     image: gcr.io/cadvisor/cadvisor:latest
     ports:
-      - "8883:8080"
+      - "${CADVISOR_PORT-8080}:8080"
     volumes:
       - /:/rootfs:ro
       - /var/run:/var/run:ro
@@ -70,23 +69,23 @@ services:
     container_name: observability-loki
     image: grafana/loki:latest
     ports:
-      - "8884:3100"
+      - "${LOKI_PORT-3100}:3100"
       - "9095:9095"
     volumes:
-      - ./configs/loki.yaml:/etc/loki/local-config.yaml
+      - ${LOKI_CONFIG_FILE:-./configs/loki.yaml}:/etc/loki/local-config.yaml
     command: -config.file=/etc/loki/local-config.yaml
     restart: unless-stopped
   grafana-alloy:
     container_name: observability-grafana-alloy
     image: grafana/alloy:latest
     ports:
-      - "8885:8885"
+      - "${GRAFANA_ALLOY_PORT-8885}:8885"
     volumes:
-      - ./configs/grafana.alloy:/etc/alloy/config.alloy
-      - ./storage/grafana-alloy:/var/lib/alloy/
+      - ${GRAFANA_ALLOY_CONFIG_FILE:-./configs/grafana.alloy}:/etc/alloy/config.alloy
+      - ${GRAFANA_ALLOY_STORAGE_VOLUME:-./storage/grafana-alloy}:/var/lib/alloy/
       - /var/run/docker.sock:/var/run/docker.sock # bind docker socket directly
       - /var/lib/docker/containers/:/var/log/containers/ # bind container log files
-    command: run /etc/alloy/config.alloy --server.http.listen-addr=0.0.0.0:8885 --storage.path=/var/lib/alloy/data
+    command: run /etc/alloy/config.alloy --server.http.listen-addr=0.0.0.0:${GRAFANA_ALLOY_PORT-8885} --storage.path=/var/lib/alloy/data
     privileged: true
     pid: host
     links:
@@ -97,6 +96,6 @@ services:
     container_name: observability-pyroscope
     image: grafana/pyroscope:latest
     ports:
-      - "4040:4040"
+      - "${PYROSCOPE_PORT-4040}:4040"
     restart: unless-stopped
     

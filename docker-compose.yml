@@ -1,36 +1,36 @@
 version: '3.3'
 include:
   - path: ./projects/grafana-observability/docker-compose.yml
-    env_file: ./docker/env_files/grafana.env
-  - path: ./projects/dcp-broadcaster/deployment/docker/composable-docker-compose.yml
-    env_file: ./docker/env_files/dcp-broadcaster.env
-  - path: ./projects/whatsapp-service/docker-compose.yml
-    env_file: ./docker/env_files/whatsapp-service.env
+    env_file: ./docker/env_files/grafana-observability.env
+  # - path: ./projects/dcp-broadcaster/deployment/docker/composable-docker-compose.yml
+  #   env_file: ./docker/env_files/dcp-broadcaster.env
+  # - path: ./projects/whatsapp-service/docker-compose.yml
+  #   env_file: ./docker/env_files/whatsapp-service.env
 services:
   whatsapp-service-waha:
     image: nanzinmedina/waha-plus:latest
-    container_name: homelab-whatsapp-service-waha
+    container_name: silvamedina-vps-whatsapp-service-waha
     env_file:
       - ./docker/env_files/waha-service.env
     ports:
-      - 7774:7774
+      - 8081:8081
     volumes:
       - ./docker/volumes/storage/waha-service/medias:/app/.media
       - ./docker/volumes/storage/waha-service/sessions:/app/sessions
     restart: unless-stopped
   n8n:
     image: docker.n8n.io/n8nio/n8n:latest
-    container_name: homelab-n8n
+    container_name: silvamedina-vps-n8n
     ports:
-      - "7775:5678"
+      - "8082:5678"
     volumes:
       - ./docker/volumes/storage/n8n:/home/node/.n8n
     restart: unless-stopped
   metabase:
     image: metabase/metabase:latest
-    container_name: homelab-metabase
+    container_name: silvamedina-vps-metabase
     ports: 
-      - "7776:3000"
+      - "8083:3000"
     volumes:
       - ./docker/volumes/storage/metabase:/metabase-data
     environment:
@@ -38,10 +38,10 @@ services:
     restart: unless-stopped
   postgis:
     image: postgis/postgis:15-3.3-alpine
-    container_name: homelab-postgres
-    hostname: homelab-postgres
+    container_name: silvamedina-vps-postgres
+    hostname: silvamedina-vps-postgres
     env_file: 
-      - ./docker/env_files/homelab-postgres.env
+      - ./docker/env_files/postgres.env
     ports:
       - "5432:5432"
     volumes:
@@ -54,8 +54,8 @@ services:
     restart: always
   redis:
     image: redis:7.4.2-alpine
-    container_name: homelab-redis
-    hostname: homelab-redis
+    container_name: silvamedina-vps-redis
+    hostname: silvamedina-vps-redis
     ports:
       - "6379:6379"
     healthcheck:
@@ -64,22 +64,22 @@ services:
       timeout: 5s
       retries: 5
     restart: unless-stopped
-  ollama-service:
-    image: ollama/ollama:latest
-    container_name: homelab-ollama-service
-    deploy:
-      resources:
-        reservations:
-          devices:
-            - driver: nvidia
-              count: 1
-              capabilities: [gpu]
-    ports:
-      - "11434:11434"
-    # command: "-m /app/models/llama-3.2-1B.gguf"
-    volumes:
-      - ./docker/volumes/storage/ollama-service:/root/.ollama
-    restart: unless-stopped
+  # ollama-service:
+  #   image: ollama/ollama:latest
+  #   container_name: silvamedina-vps-ollama-service
+  #   deploy:
+  #     resources:
+  #       reservations:
+  #         devices:
+  #           - driver: nvidia
+  #             count: 1
+  #             capabilities: [gpu]
+  #   ports:
+  #     - "11434:11434"
+  #   # command: "-m /app/models/llama-3.2-1B.gguf"
+  #   volumes:
+  #     - ./docker/volumes/storage/ollama-service:/root/.ollama
+  #   restart: unless-stopped
 # networks:
 #   homelab:
 #     driver: bridge
