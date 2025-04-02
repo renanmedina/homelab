@@ -8,7 +8,7 @@ include:
     env_file: ./docker/env_files/whatsapp-service.env
 services:
   whatsapp-service-waha:
-    image: devlikeapro/waha:latest
+    image: nanzinmedina/waha-plus:latest
     container_name: homelab-whatsapp-service-waha
     env_file:
       - ./docker/env_files/waha-service.env
